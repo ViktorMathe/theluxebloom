@@ -22,5 +22,5 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("consents/", include("consent_forms.urls", namespace="consents_forms")),
+    path("", include("consent_forms.urls", namespace="consents_forms")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

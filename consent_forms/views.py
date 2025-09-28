@@ -44,7 +44,8 @@ def generate_pdf_for_submission(submission):
 
 def choose_template(request):
     templates = ConsentTemplate.objects.all()
-    return render(request, "consents/choose_template.html", {"templates": templates})
+    print(templates)
+    return render(request, "choose_template.html", {"templates": templates})
 
 def fill_template(request, slug):
     template = get_object_or_404(ConsentTemplate, slug=slug)
@@ -102,8 +103,8 @@ def fill_template(request, slug):
             initial.update({"full_name": client.full_name, "email": client.email, "phone": client.phone})
         form = ConsentFillForm(initial=initial)
 
-    return render(request, "consents/fill_template.html", {"template": template, "form": form, "client": client})
+    return render(request, "fill_template.html", {"template": template, "form": form, "client": client})
 
 def thank_you(request, pk):
     submission = get_object_or_404(ConsentSubmission, pk=pk)
-    return render(request, "consents/thank_you.html", {"submission": submission})
+    return render(request, "thank_you.html", {"submission": submission})

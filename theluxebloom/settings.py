@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-r26har(m$r!n*46-xy2&ys*gka@&*dl9m!635_i)7s-ji0kw1-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -55,7 +55,7 @@ ROOT_URLCONF = "theluxebloom.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / 'templates'],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
