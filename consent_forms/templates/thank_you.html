@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="container">
+    <h2>Thank you, {{ submission.full_name }}!</h2>
+    <p>We recorded your consent for <strong>{{ submission.treatment_type }}</strong> on {{ submission.treatment_date }}.</p>
+    {% if submission.pdf %}
+      <p><a href="{{ submission.pdf.url }}" target="_blank">Download your signed copy (PDF)</a></p>
+    {% endif %}
+  </div>
+{% endblock %}

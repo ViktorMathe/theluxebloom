@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'consents/consents.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+{% endblock %}
+{% block content %}
+<div class="consent-page">
+  <aside class="consent-brand">
+    <img src="{% static 'images/logo.png' %}" alt="Logo" class="brand-logo">
+    <!-- replace logo.png with your actual logo in static/images/ -->
+  </aside>
+
+  <main class="consent-form">
+    <h1>{{ template.title }}</h1>
+    <div class="consent-body">{{ template.body|safe }}</div>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      <div class="field-row">
+        {{ form.full_name.label_tag }}<br>{{ form.full_name }}
+      </div>
+      <div class="field-row">
+        {{ form.email.label_tag }}<br>{{ form.email }}
+      </div>
+      <div class="field-row">
+        {{ form.phone.label_tag }}<br>{{ form.phone }}
+      </div>
+      <div class="field-row">
+        {{ form.treatment_date.label_tag }}<br>{{ form.treatment_date }}
+      </div>
+      <div class="field-row">
+        {{ form.treatment_type.label_tag }}<br>{{ form.treatment_type }}
+      </div>
+
+      <hr>
+
+      <h3>Health Questions</h3>
+      <div class="field-row">
+        {{ form.allergies.label_tag }}<br>{{ form.allergies }}
+      </div>
+      <div class="field-row">
+        {{ form.pregnancy.label_tag }}<br>{{ form.pregnancy }}
+      </div>
+      <div class="field-row">
+        {{ form.medications.label_tag }}<br>{{ form.medications }}
+      </div>
+      <div class="field-row">
+        {{ form.skin_conditions.label_tag }}<br>{{ form.skin_conditions }}
+      </div>
+
+      <label>Sign (draw) — or type your full name below</label>
+      <div id="signature-pad" class="signature-pad"><canvas></canvas></div>
+      <button type="button" id="clear-sign">Clear signature</button>
+
+      <div class="field-row">
+        {{ form.typed_signature.label_tag }}<br>{{ form.typed_signature }}
+      </div>
+
+      <!-- hidden field for signature image -->
+      {{ form.signature_data }}
+
+      <div class="field-row">
+        {{ form.consent_given }} {{ form.consent_given.label_tag }}
+      </div>
+
+      <button type="submit" class="btn-primary">Submit</button>
+    </form>
+  </main>
+</div>
+
+<script>
+(function(){
+  const canvas = document.querySelector("#signature-pad canvas");
+  function resizeCanvas() {
+    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+    canvas.width = canvas.offsetWidth * ratio;
+    canvas.height = canvas.offsetHeight * ratio;
+    canvas.getContext("2d").scale(ratio, ratio);
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  const signaturePad = new SignaturePad(canvas, { backgroundColor: "#ffffff" });
+  const clearBtn = document.getElementById('clear-sign');
+  clearBtn.addEventListener('click', function(){ signaturePad.clear(); });
+
+  const form = document.querySelector("form");
+  form.addEventListener('submit', function(e){
+    const signatureInput = document.querySelector("input[name='signature_data']");
+    // if there is a drawn signature, save it. Otherwise ensure typed signature exists.
+    if (!signaturePad.isEmpty()){
+      signatureInput.value = signaturePad.toDataURL('image/png');
+    } else {
+      signatureInput.value = "";
+      // let server-side form validation handle typed_signature/consent
+    }
+  });
+})();
+</script>
+{% endblock %}

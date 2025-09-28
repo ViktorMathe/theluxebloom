@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <style>
+    body { font-family: Arial, sans-serif; font-size: 12px; color: #222; }
+    .header { text-align:center; margin-bottom:20px; }
+    .section { margin-bottom:12px; }
+    .signature { margin-top:20px; }
+    img.signature-img { max-width: 400px; height: auto; border: 1px solid #ccc; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>{{ submission.template.title }}</h1>
+  </div>
+
+  <div class="section">
+    <strong>Client:</strong> {{ submission.full_name }}<br/>
+    <strong>Email:</strong> {{ submission.email }}<br/>
+    <strong>Phone:</strong> {{ submission.phone }}<br/>
+    <strong>Treatment:</strong> {{ submission.treatment_type }} on {{ submission.treatment_date }}<br/>
+    <strong>Signed at:</strong> {{ submission.signed_at }}
+  </div>
+
+  <div class="section">
+    <strong>Consent given:</strong> {{ submission.consent_given|yesno:"Yes,No" }}
+  </div>
+
+  <div class="section">
+    <strong>Template text:</strong>
+    <div style="border:1px solid #eee; padding:10px;">
+      {{ submission.template.body|safe }}
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Health Information</h3>
+      <p><strong>Allergies:</strong> {{ submission.answers.allergies }}</p>
+      <p><strong>Pregnancy/Breastfeeding:</strong> {{ submission.answers.pregnancy }}</p>
+      <p><strong>Medications:</strong> {{ submission.answers.medications }}</p>
+      <p><strong>Skin conditions:</strong> {{ submission.answers.skin_conditions }}</p>
+  </div>
+
+  <div class="signature">
+    <strong>Typed signature:</strong> {{ submission.typed_signature }}<br/>
+    {% if submission.signature_image %}
+      <div>
+        <strong>Drawn signature:</strong><br/>
+        <img class="signature-img" src="{{ submission.signature_image.path|default:submission.signature_image.url }}">
+      </div>
+    {% endif %}
+  </div>
+</body>
+</html>

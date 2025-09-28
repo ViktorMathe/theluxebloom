@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="container">
+    <h1>Choose a form</h1>
+    <ul class="template-list">
+      {% for t in templates %}
+        <li><a href="{% url 'consents:fill_template' t.slug %}">{{ t.title }}</a></li>
+      {% empty %}
+        <li>No templates available yet.</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}
