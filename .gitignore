@@ -143,6 +143,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+theluxebloom_ve/
 
 # Spyder project settings
 .spyderproject

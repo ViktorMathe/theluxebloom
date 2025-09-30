@@ -10,20 +10,24 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(dotenv_path=os.path.join(BASE_DIR, '.env'))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-r26har(m$r!n*46-xy2&ys*gka@&*dl9m!635_i)7s-ji0kw1-"
+SECRET_KEY = os.getenv('SECRET_KEY', '')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEVELOPMENT", "False") == "True"
 
 ALLOWED_HOSTS = ['*']
 
@@ -33,10 +37,13 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
+    'django.contrib.sites',
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'allauth',
+    'allauth.account',
     'consent_forms',
 ]
 
@@ -48,7 +55,13 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'allauth.account.middleware.AccountMiddleware',
 ]
+
+CSRF_TRUSTED_ORIGINS = [
+        'http://localhost',
+        'https://*.devtunnels.ms'
+    ]
 
 ROOT_URLCONF = "theluxebloom.urls"
 
@@ -62,6 +75,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "theluxebloom.context_processors.staff_or_superuser",
             ],
         },
     },
@@ -73,12 +87,32 @@ WSGI_APPLICATION = "theluxebloom.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'theluxebloom_db',
+            'USER': 'viktormathe',
+            'HOST': 'localhost',
+            'PORT': '5432',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': str('defaultdb'),
+            'USER': os.environ.get('DB_USER'),
+            'PASSWORD': os.environ.get('DB_PASSWORD'),
+            'HOST': os.environ.get('DB_HOST'),
+            'PORT': os.environ.get('DB_PORT'),
+            'OPTIONS': {
+                'sslmode': 'require',
+                'sslrootcert': 'static/ssl_cert/ca.pem',
+                },
+            }
+    }
+
 
 
 # Password validation
@@ -105,7 +139,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = 'Europe/London'
 
 USE_I18N = True
 
